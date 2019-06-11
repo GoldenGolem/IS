@@ -1,0 +1,62 @@
+<div *ngIf="auth.loggedIn
+  && (auth.user()._id === fileEntry.user._id || auth.isAdmin)">
+  <div class="pull-right">
+    <button class="btn btn-primary" (click)="filePermission()" id="fileEditBtn" *ngIf="fileEntry.enabled">
+      <i class="fa fa-edit"></i>
+      Disable
+    </button>
+    <button class="btn btn-primary" (click)="filePermission()" id="fileEditBtn" *ngIf="!fileEntry.enabled">
+      <i class="fa fa-edit"></i>
+      Enable
+    </button>
+    <button
+      class="btn btn-danger"
+      id="fileDeleteBtn"
+      (click)="deleteFileEntry()">
+      <i class="fa fa-trash-o"></i>
+      Delete
+    </button>
+  </div>
+  <br />
+  <br />
+  <div class="alert alert-danger" *ngIf="fileService.error">
+    {{fileService.error}}
+  </div>
+</div>
+
+<h1>{{fileEntry.name}}</h1>
+
+<small>
+  Posted on {{fileEntry.created}} by
+  <!-- Pass username query param just for post count template. Only
+       user (id) is actually used for filtering. -->
+    <a
+      [queryParams]="{
+        user: fileEntry.user._id,
+        username: fileEntry.user.profile.name
+      }"
+      [routerLink]="['/file/list']">
+    {{fileEntry.user.profile.name}}
+  </a>
+</small>
+
+<div id="fileEntryContent">
+  File Key: {{fileEntry._id}}
+</div>
+
+<br />
+
+<div
+  *ngIf="fileEntry.comments && fileEntry.comments.length"
+  id="fileEntryComments">
+  <h3>Comments</h3>
+  <app-comment-view
+    *ngFor="let comment of fileEntry.comments trackBy _id; let index = index"
+    [fileEntry]="fileEntry"
+    [comment]="comment"
+    (onDeleteSuccess)="onCommentDeleteSuccess(index)"
+    class="fileEntryComment">
+  </app-comment-view>
+</div>
+
+<br />

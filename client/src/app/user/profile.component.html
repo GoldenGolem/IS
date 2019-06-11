@@ -1,0 +1,192 @@
+<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+  <div class="jumbotron">
+    <form
+      id="profileForm"
+      novalidate 
+      [formGroup]="profileForm" 
+      (submit)="updateUser()">
+      <fieldset>
+        <legend>Profile</legend>
+        <div
+          class="form-group"
+          [class.has-error]="
+            !profileForm.get('email').valid
+              && profileForm.get('email').touched">
+          <label class="control-label" for="email">
+            <strong>Email *</strong>
+          </label>
+          <input
+            class="form-control" 
+            id="email"
+            name="email"
+            type="email"
+            *ngIf="!user.oauth"
+            [formControl]="profileForm.get('email')"/>
+          <p *ngIf="user.oauth">{{user.email}}</p>
+          <span
+            class="help-block"
+            *ngIf="profileForm.get('email').hasError('required')">
+            Email is required
+          </span>
+          <span
+            class="help-block"
+            *ngIf="profileForm.get('email').hasError('pattern')">
+            Must be a proper email
+          </span>
+        </div>
+        <div
+          class="form-group"
+          [class.has-error]="
+            !profileForm.get('profile').get('name').valid
+              && profileForm.get('profile').get('name').touched">
+          <label class="control-label" for="name">
+            <strong>Name *</strong>
+          </label>
+          <input
+            class="form-control" 
+            id="name"
+            name="name"
+            type="text"
+            [formControl]="profileForm.get('profile').get('name')"/>
+          <span
+            class="help-block"
+            *ngIf="profileForm.get('profile')
+              .get('name').hasError('required')">
+            Name is required
+          </span>
+          <span
+            class="help-block"
+            *ngIf="profileForm.get('profile')
+              .get('name').hasError('minlength')">
+            Name requires at least three characters
+          </span>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="gender">
+            Gender
+          </label>
+          <input
+            class="form-control" 
+            id="gender"
+            name="gender"
+            type="text"
+            [formControl]="profileForm.get('profile').get('gender')"/>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="location">
+            Location
+          </label>
+          <input
+            class="form-control" 
+            id="location"
+            name="location"
+            type="text"
+            [formControl]="profileForm.get('profile').get('location')"/>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="website">
+            Web site
+          </label>
+          <input
+            class="form-control" 
+            id="website"
+            name="website"
+            type="text"
+            [formControl]="profileForm.get('profile').get('website')"/>
+        </div>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="profileForm.invalid">
+          Update Profile
+        </button>
+      </fieldset>
+    </form>
+
+    <br />
+    <br />
+
+    <div>
+      <img
+        *ngIf="profilePic && !uploader.queue[0]"
+        src="{{profilePic}}"
+        style="width: 100%;"/>
+      <div *ngIf="uploading"><i class="fa fa-spinner fa-pulse"></i></div>
+      <input type="file" ng2FileSelect [uploader]="uploader" (change)="detectChanges()"/>
+      <br />
+      <button
+        class="btn btn-default"
+        (click)="startUpload()"
+        [disabled]="!uploader.queue[0]">
+        Upload Picture
+      </button>
+    </div>
+
+    <br />
+    <br />
+
+    <form
+      id="passwordForm"
+      novalidate
+      *ngIf="!user.oauth"
+      [formGroup]="passwordForm"
+      (submit)="changePassword()">
+      <fieldset>
+        <legend>Change Password</legend>
+        <div
+          class="form-group"
+          [class.has-error]="!passwordForm.get('password').valid
+              && passwordForm.get('password').touched">
+          <label class="control-label" for="password">
+            Password
+          </label>
+          <input
+            class="form-control" 
+            id="password"
+            name="password"
+            type="password"
+            [formControl]="passwordForm.get('password')"/>
+          <span
+            class="help-block"
+            *ngIf="passwordForm.get('password').hasError('minlength')">
+            Password must contain at least 6 characters
+          </span>
+        </div>
+        <div
+          class="form-group"
+          [class.has-error]="!passwordForm.get('confirmPassword').valid
+              && passwordForm.get('confirmPassword').touched">
+          <label class="control-label" for="confirmPassword">
+            Confirm Password
+          </label>
+          <input
+            class="form-control" 
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            [formControl]="passwordForm.get('confirmPassword')"/>
+          <span
+            class="help-block"
+            *ngIf="passwordForm.get('confirmPassword')
+              .hasError('minlength')">
+            Password must contain at least 6 characters
+          </span>
+        </div>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="passwordForm.invalid">
+          Change Password
+        </button>
+      </fieldset>
+    </form>
+    <br />
+    <br />
+    <div class="alert alert-success" *ngIf="message">
+      {{message}}
+    </div>
+    <div class="alert alert-danger" *ngIf="authService.error">
+      {{authService.error}}
+    </div>
+  </div>
+</div>

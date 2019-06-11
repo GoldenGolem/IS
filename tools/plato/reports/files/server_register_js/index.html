@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - server/register.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>server/register.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">72.63</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">466</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">23.77</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.30</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">var _ = require(&#039;lodash&#039;)
+// var babel = require(&#039;babel-core&#039;)
+// var chalksay = require(&#039;chalksay&#039;)
+// var concat = require(&#039;serial-concat-files&#039;)
+var debug = require(&#039;debug&#039;)(&#039;meanstackjs:register&#039;)
+var fs = require(&#039;fs&#039;)
+// var less = require(&#039;less&#039;)
+var mongoose = require(&#039;mongoose&#039;)
+// var uglify = require(&#039;uglify-js&#039;)
+// var uglifycss = require(&#039;uglifycss&#039;)
+// var sass = require(&#039;node-sass&#039;)
+var path = require(&#039;path&#039;)
+var pathExists = require(&#039;is-there&#039;)
+var dir = __dirname
+function Register (self, done) {
+  // Start Build Process
+  // getFolderContents &gt; Used to dynamically get all of the contents of all module folders.
+  this.getFolderContents(self)
+  // // setupFrontendDirectories &gt; Used to set up all directories need &amp; to remove the previously compiled files.
+  // this.setupFrontendDirectories(self)
+  // // compileFrontendStylesScripts &gt; Used to compile all of the info needed for styles &amp; scripts to render later.
+  // this.compileFrontendStylesScripts(self)
+  // compileBackendScripts &gt; Used to compile all of the info need for all of the backend modules.
+  this.compileBackendScripts(self)
+  // transformBabel &gt; Used to transform files to es6 - commented out till the next release.
+  // self.transformBabel()
+  // setupServerModels &gt; Used to set up the mongoose modules.
+  this.setupServerModels(self)
+  // setupServerRoutes &gt; Used to set up the module routes.
+  this.setupServerRoutes(self)
+  // // renderFrontendFiles &gt; Used to render all of the frontend files based on all the information from above.
+  // this.renderFrontendFiles(self)
+  // // updateFrontendCdn &gt; Used to update the files based of if your using a cdn. We Support MAXCDN.
+  // this.updateFrontendCdn(self)
+  // frontendFiles &gt; Returns the files to send to the frontend
+  // return self.frontendFiles
+}
+
+Register.prototype.getFolderContents = function (self) {
+  debug(&#039;started Info&#039;)
+
+  // var self = this
+  self.transformFiles = []
+  self.transformFolders = []
+
+  function expandModules (arr, dir) {
+    var returnConfigs = []
+    arr.forEach(function (value, key) {
+      var obj = {
+        &#039;name&#039;: value,
+        &#039;lookup&#039;: dir + &#039;/&#039; + value
+      }
+      var files = fs.readdirSync(dir + &#039;/&#039; + value)
+      files = _.filter(files, function (n) {
+        return !_.startsWith(n, &#039;.&#039;)
+      })
+      obj.files = []
+      files.forEach(function (f) {
+        var fileData = _.words(f, /[^. ]+/g)
+        obj.files.push({
+          &#039;type&#039;: fileData[1],
+          &#039;ext&#039;: fileData[2],
+          &#039;name&#039;: fileData[0],
+          &#039;orginal&#039;: f
+        })
+      })
+      returnConfigs.push(obj)
+    })
+    return returnConfigs
+  }
+
+  var backendPath = path.resolve(dir, &#039;./modules&#039;)
+
+  if (!pathExists(backendPath)) {
+    throw new Error(&#039;Critical Folder Missing:Expected Server Modules Directory ./server/modules/&#039;)
+  }
+
+  var backendConfigs = expandModules(_.filter(fs.readdirSync(backendPath), function (n) {
+    return !_.startsWith(n, &#039;.&#039;)
+  }), backendPath)
+
+  // var frontendPath = path.resolve(dir, &#039;../client/modules&#039;)
+  // if (!pathExists(frontendPath)) {
+  //   throw new Error(&#039;Critical Folder Missing:Expected Server Modules Directory ./client/modules/&#039;)
+  // }
+
+  // var frontendConfigs = _.filter(fs.readdirSync(frontendPath), function (n) {
+  //   return !_.startsWith(n, &#039;.&#039;)
+  // })
+
+  // var mainFrontendFile = &#039;&#039;
+  // frontendConfigs = expandModules.bind(self)(_.filter(frontendConfigs, function (n) {
+  //   if (path.extname(n) !== &#039;&#039;) mainFrontendFile = n
+  //   return path.extname(n) === &#039;&#039;
+  // }), frontendPath)
+
+  self.backendFolders = backendConfigs
+  // self.frontendFolders = frontendConfigs
+  // self.mainFrontendFile = mainFrontendFile
+  debug(&#039;end Info&#039;)
+}
+
+// Register.prototype.setupFrontendDirectories = function (self) {
+//   debug(&#039;started directories&#039;)
+//
+//   // var self = this
+//
+//   function rmdirSync (url) {
+//     if (pathExists(url)) {
+//       fs.readdirSync(url).forEach(function (file, index) {
+//         var curPath = path.resolve(url + &#039;/&#039; + file)
+//         if (fs.lstatSync(curPath).isDirectory()) {
+//           //
+//         } else { // delete file
+//           fs.unlinkSync(curPath)
+//         }
+//       })
+//     // fs.rmdirSync(url)
+//     }
+//   }
+//
+//   if (self.settings.babel.active) {
+//     debug(&#039;checking babel directories&#039;)
+//     chalksay.red(&#039;Babel Currently Removed \n\n Will be Integrated later in 1.x&#039;)
+//   // if (!pathExists(dir + &#039;/../client/&#039; + self.settings.babel.folder + &#039;/&#039;)) {
+//   //   fs.mkdirSync(dir + &#039;/../client/&#039; + self.settings.babel.folder + &#039;/&#039;)
+//   // }
+//   // rmdirSync(dir + &#039;/../client/&#039; + self.settings.babel.folder + &#039;/&#039;)
+//   // if (!pathExists(dir + &#039;/&#039; + self.settings.babel.folder + &#039;/&#039;)) {
+//   //   fs.mkdirSync(dir + &#039;/&#039; + self.settings.babel.folder + &#039;/&#039;)
+//   // } else {
+//   //   rmdirSync(dir + &#039;/&#039; + self.settings.babel.folder + &#039;/&#039;)
+//   // }
+//   // forEach(_.uniq(self.transformFolders), function (n) {
+//   //   if (!pathExists(dir + &#039;/&#039; + self.settings.babel.folder + &#039;/&#039; + n + &#039;/&#039;)) {
+//   //     fs.mkdirSync(dir + &#039;/&#039; + self.settings.babel.folder + &#039;/&#039; + n + &#039;/&#039;)
+//   //   } else {
+//   //     rmdirSync(dir + &#039;/&#039; + self.settings.babel.folder + &#039;/&#039; + n + &#039;/&#039;)
+//   //   }
+//   // })
+//   }
+//
+//   if (!pathExists(dir + &#039;/../client/scripts/&#039;)) {
+//     fs.mkdirSync(dir + &#039;/../client/scripts/&#039;)
+//   }
+//   if (!pathExists(dir + &#039;/../client/styles/compiled/&#039;)) {
+//     fs.mkdirSync(dir + &#039;/../client/styles/compiled/&#039;)
+//   }
+//   if (!pathExists(dir + &#039;/../client/scripts/compiled/&#039;)) {
+//     fs.mkdirSync(dir + &#039;/../client/scripts/compiled/&#039;)
+//   }
+//   if (!pathExists(dir + &#039;/../client/uploads/&#039;)) {
+//     fs.mkdirSync(dir + &#039;/../client/uploads/&#039;)
+//   }
+//
+//   // DELETE ALL PREVIOUSLY COMPILED
+//   rmdirSync(dir + &#039;/../client/styles/compiled/&#039;)
+//   rmdirSync(dir + &#039;/../client/scripts/compiled/&#039;)
+//   debug(&#039;end directories&#039;)
+// }
+//
+// Register.prototype.compileFrontendStylesScripts = function (self) {
+//   debug(&#039;started config&#039;)
+//
+//   // var self = this
+//
+//   self.frontendFiles = {
+//     &#039;controller&#039;: [],
+//     &#039;module&#039;: [],
+//     &#039;routes&#039;: [],
+//     &#039;style&#039;: {
+//       &#039;css&#039;: [],
+//       &#039;scss&#039;: [],
+//       &#039;sass&#039;: [],
+//       &#039;less&#039;: []
+//     },
+//     &#039;view&#039;: [],
+//     &#039;config&#039;: [],
+//     &#039;factory&#039;: [],
+//     &#039;service&#039;: [],
+//     &#039;provider&#039;: [],
+//     &#039;else&#039;: []
+//   }
+//
+//   self.frontendFilesFinal = {
+//     css: [],
+//     js: []
+//   }
+//
+//   self.frontendFilesAggregate = {
+//     css: [],
+//     js: []
+//   }
+//
+//   fs.writeFileSync(
+//     path.join(dir, &#039;/../client/styles/global-configs.styles.scss&#039;),
+//     &#039;$ENV: &quot;&#039; + self.environment + &#039;&quot; !default;\n&#039; + &#039;$CDN: &quot;&#039; + self.settings.cdn + &#039;&quot; !default;\n&#039;
+//   )
+//
+//   self.frontendFolders.forEach(function (r) {
+//     r.files.forEach(function (j) {
+//       // Use for Babel when the front end is implemented
+//       // var baseDirectory = &#039;./modules/&#039;
+//       // if (j.ext === &#039;js&#039; &amp;&amp; self.settings.babel.active &amp;&amp; j.type !== &#039;spec&#039;) {
+//       //   self.transformFiles.push(&#039;/&#039; + r.name + &#039;/&#039; + j.orginal)
+//       //   self.transformFolders.push(r.name)
+//       //   baseDirectory = &#039;./&#039; + self.settings.babel.folder + &#039;/&#039;
+//       // }
+//       switch (j.type) {
+//         case &#039;module&#039;:
+//           self.frontendFiles.module.push(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//           self.frontendFilesFinal.js.unshift(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//           self.frontendFilesAggregate.js.unshift(path.join(dir, &#039;../client/modules/&#039; + r.name + &#039;/&#039; + j.orginal))
+//           break
+//         case &#039;controller&#039;:
+//         case &#039;routes&#039;:
+//         case &#039;config&#039;:
+//         case &#039;service&#039;:
+//         case &#039;provider&#039;:
+//         case &#039;directive&#039;:
+//           self.frontendFiles.controller.push(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//           self.frontendFilesFinal.js.push(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//           self.frontendFilesAggregate.js.push(path.join(dir, &#039;../client/modules/&#039; + r.name + &#039;/&#039; + j.orginal))
+//           break
+//         case &#039;style&#039;:
+//           if (j.ext === &#039;css&#039;) {
+//             self.frontendFiles.style.css.push(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//             self.frontendFilesFinal.css.push(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//             self.frontendFilesAggregate.css.push(path.join(dir, &#039;../client/modules/&#039; + r.name + &#039;/&#039; + j.orginal))
+//           } else if (j.ext === &#039;scss&#039; || j.ext === &#039;sass&#039;) {
+//             var scssContents = fs.readFileSync(path.join(dir, &#039;/../client/modules/&#039; + r.name + &#039;/&#039; + j.orginal), &#039;utf8&#039;)
+//             // PLACED includePaths: so that @import &#039;global-variables.styles.scss&#039;; work properly
+//             var result = sass.renderSync({
+//               includePaths: [path.join(dir, &#039;../client/modules&#039;), path.join(dir, &#039;../client/styles&#039;), path.join(dir, &#039;../client/bower_components/bootstrap-sass/assets/stylesheets&#039;), path.join(dir, &#039;../client/bower_components/Materialize/sass&#039;), path.join(dir, &#039;../client/bower_components/foundation/scss&#039;), path.join(dir, &#039;../client/bower_components/font-awesome/scss&#039;)],
+//               data: scssContents
+//             })
+//             fs.writeFileSync(path.join(dir, &#039;/../client/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;), result.css)
+//             if (j.ext === &#039;scss&#039;) {
+//               self.frontendFiles.style.scss.push({
+//                 orginal: &#039;/client/modules/&#039; + r.name + &#039;/&#039; + j.orginal,
+//                 compiled: &#039;/client/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;
+//               })
+//             } else {
+//               self.frontendFiles.style.sass.push({
+//                 orginal: &#039;/client/modules/&#039; + r.name + &#039;/&#039; + j.orginal,
+//                 compiled: &#039;/client/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;
+//               })
+//             }
+//             self.frontendFilesFinal.css.push(&#039;/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;)
+//             self.frontendFilesAggregate.css.push(path.join(dir, &#039;../client/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;))
+//           } else if (j.ext === &#039;less&#039;) {
+//             var lessContents = fs.readFileSync(path.join(dir, &#039;/../client/modules/&#039; + r.name + &#039;/&#039; + j.orginal), &#039;utf8&#039;)
+//             less.render(lessContents, function (err, result) {
+//               if (err) {
+//                 debug(err)
+//               }
+//               fs.writeFileSync(path.join(dir, &#039;/../client/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;), result.css)
+//               self.frontendFiles.style.less.push({
+//                 orginal: &#039;/client/modules/&#039; + r.name + &#039;/&#039; + j.orginal,
+//                 compiled: &#039;/client/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;
+//               })
+//               self.frontendFilesFinal.css.push(&#039;/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;)
+//               self.frontendFilesAggregate.css.push(path.join(dir, &#039;../client/styles/compiled/&#039; + j.name + &#039;.&#039; + j.type + &#039;.&#039; + j.ext + &#039;.css&#039;))
+//             })
+//           } else {
+//             debug(&#039;Unknown Style&#039;, j)
+//           }
+//           break
+//         case &#039;json&#039;:
+//         case &#039;view&#039;:
+//         case &#039;spec&#039;:
+//           // debug(j.type)
+//           break
+//         default:
+//           if (j.ext === &#039;js&#039;) {
+//             self.frontendFiles.else.push(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//             self.frontendFilesFinal.js.push(&#039;/modules/&#039; + r.name + &#039;/&#039; + j.orginal)
+//             self.frontendFilesAggregate.js.push(path.join(dir, &#039;../client/modules/&#039; + r.name + &#039;/&#039; + j.orginal))
+//           } else if (j.ext === &#039;css&#039;) {
+//             debug(&#039;Did you name css wrong?&#039;, j)
+//           } else {
+//             debug(&#039;Unknown&#039;, j)
+//           }
+//           break
+//       }
+//     })
+//   })
+//   debug(&#039;end config&#039;)
+// }
+
+Register.prototype.compileBackendScripts = function (self) {
+  debug(&#039;started compileBackendScripts&#039;)
+
+  // var self = this
+  self.backendFiles = {
+    &#039;model&#039;: [],
+    &#039;controllers&#039;: [],
+    &#039;routes&#039;: []
+  }
+  self.backendFolders.forEach(function (r) {
+    r.files.forEach(function (j) {
+      var baseDirectory = &#039;./modules/&#039;
+      // if (j.ext === &#039;js&#039; &amp;&amp; self.settings.babel.active &amp;&amp; j.type !== &#039;spec&#039;) {
+      //   self.transformFiles.push(&#039;/&#039; + r.name + &#039;/&#039; + j.orginal)
+      //   self.transformFolders.push(r.name)
+      //   baseDirectory = &#039;./&#039; + self.settings.babel.folder + &#039;/&#039;
+      // }
+      if (j.type === &#039;controller&#039;) {
+        self.backendFiles.controllers.push({name: r.name, url: baseDirectory + r.name + &#039;/&#039; + j.orginal})
+      } else if (j.type === &#039;model&#039;) {
+        self.backendFiles.model.push({name: j.name, url: baseDirectory + r.name + &#039;/&#039; + j.orginal})
+      } else if (j.type === &#039;routes&#039;) {
+        self.backendFiles.routes.push({name: r.name, url: baseDirectory + r.name + &#039;/&#039; + j.orginal})
+      } else {
+        // debug(j.type)
+      }
+    })
+  })
+  debug(&#039;end compileBackendScripts&#039;)
+}
+
+Register.prototype.setupServerModels = function (self) {
+  debug(&#039;started createBackendModels&#039;)
+  // var self = this
+  self.models = {}
+  self.backendFiles.model.forEach(function (n) {
+    debug(&#039;Model: %s - %s&#039;, n.name, n.url)
+    self.models[n.name] = mongoose.model(n.name, require(n.url))
+    self.models[n.name].on(&#039;index&#039;, function (err) {
+      if (err) throw err
+    })
+  })
+  debug(&#039;end createBackendModels&#039;)
+}
+
+Register.prototype.setupServerRoutes = function (self) {
+  debug(&#039;started createBackendRoutes&#039;)
+  // var self = this
+
+  self.backendFiles.routes.forEach(function (n) {
+    debug(&#039;Route : %s&#039;, n.url)
+    require(n.url)(self.app, self.middleware, self.mail, self.settings, self.models)
+  })
+
+  debug(&#039;end createBackendRoutes&#039;)
+}
+
+Register.prototype.transformBabel = function (self) {
+  debug(&#039;babel:&#039; + self.settings.babel.active)
+  // var self = this
+
+// if (self.settings.babel.active) {
+//   debug(&#039;started transform&#039;)
+//   forEach(self.transformFiles, function (n) {
+//     fs.writeFileSync(dir + &#039;/&#039; + self.settings.babel.folder + n, babel.transformFileSync(dir + &#039;/modules/&#039; + n, self.settings.babel.options).code)
+//   })
+//   debug(&#039;end transform&#039;)
+// }
+}
+
+// Register.prototype.renderFrontendFiles = function (self) {
+//   debug(&#039;started createGlobalStyle&#039;)
+//   // var self = this
+//
+//   var globalContents = fs.readFileSync(dir + &#039;/../client/styles/global.style.scss&#039;, &#039;utf8&#039;)
+//   var result = sass.renderSync({
+//     includePaths: [
+//       path.join(dir, &#039;../client/modules&#039;),
+//       path.join(dir, &#039;../client/styles&#039;),
+//       path.join(dir, &#039;../client/bower_components/bootstrap-sass/assets/stylesheets&#039;),
+//       path.join(dir, &#039;../client/bower_components/Materialize/sass&#039;),
+//       path.join(dir, &#039;../client/bower_components/foundation/scss&#039;),
+//       path.join(dir, &#039;../client/bower_components/font-awesome/scss&#039;)
+//     ],
+//     data: globalContents
+//   })
+//
+//   fs.writeFileSync(dir + &#039;/../client/styles/compiled/global.style.css&#039;, result.css)
+//   debug(&#039;end createGlobalStyle&#039;)
+//
+//   debug(&#039;started createFrontend&#039;)
+//   self.frontendFilesFinal.js.unshift(/modules/ + self.mainFrontendFile)
+//   self.frontendFilesAggregate.js.unshift(path.join(dir, &#039;../client/modules/&#039; + self.mainFrontendFile))
+//
+//   self.settings.assets.css.forEach(function (ms) {
+//     self.frontendFilesFinal.css.unshift(ms)
+//     self.frontendFilesAggregate.css.unshift(path.join(dir, &#039;../client/&#039; + ms))
+//   })
+//
+//   self.settings.assets.js.forEach(function (ms) {
+//     self.frontendFilesFinal.js.unshift(ms)
+//     self.frontendFilesAggregate.js.unshift(path.join(dir, &#039;../client/&#039; + ms))
+//   })
+//   debug(&#039;end createFrontend&#039;)
+//
+//   debug(&#039;started env&#039;)
+//   if (self.settings.minify === &#039;concat&#039;) {
+//     concat(self.frontendFilesAggregate.css, path.join(dir, &#039;../client/styles/compiled/concat.css&#039;), function (error) {
+//       if (error)debug(error, &#039;concat&#039;)
+//     })
+//     concat(self.frontendFilesAggregate.js, path.join(dir, &#039;../client/scripts/compiled/concat.js&#039;), function (error) {
+//       if (error)debug(error, &#039;concat&#039;)
+//     })
+//     self.app.locals.frontendFilesFinal = {
+//       js: [&#039;scripts/compiled/concat.js&#039;],
+//       css: [&#039;styles/compiled/concat.css&#039;]
+//     }
+//   } else if (self.settings.minify === &#039;minify&#039;) {
+//     var uglifiedcss = uglifycss.processFiles(
+//       self.frontendFilesAggregate.css, {
+//         maxLineLen: 500
+//       }
+//     )
+//     fs.writeFile(path.join(dir, &#039;../client/styles/compiled/concat.min.css&#039;), uglifiedcss, function (err) {
+//       if (err) {
+//         debug(err)
+//       } else {
+//         debug(&#039;Script generated and saved:&#039;, &#039;concat.min.css&#039;)
+//       }
+//     })
+//
+//     var uglifiedjs = uglify.minify(self.frontendFilesAggregate.js, {
+//       mangle: false
+//     })
+//     fs.writeFile(path.join(dir, &#039;../client/scripts/compiled/concat.min.js&#039;), uglifiedjs.code, function (err) {
+//       if (err) {
+//         debug(err)
+//       } else {
+//         debug(&#039;Script generated and saved:&#039;, &#039;concat.min.js&#039;)
+//       }
+//     })
+//     self.app.locals.frontendFilesFinal = {
+//       js: [&#039;scripts/compiled/concat.min.js&#039;],
+//       css: [&#039;styles/compiled/concat.min.css&#039;]
+//     }
+//   } else {
+//     self.app.locals.frontendFilesFinal = self.frontendFilesFinal
+//   }
+//   debug(&#039;end env&#039;)
+// }
+
+// Register.prototype.updateFrontendCdn = function (self) {
+//   debug(&#039;started cdn&#039;)
+//   // var self = this
+//
+//   if (self.settings.cdn) {
+//     var FilesFinal = {
+//       js: [],
+//       css: []
+//     }
+//     self.app.locals.frontendFilesFinal.forEach(function (type, typeKey) {
+//       type.forEach(function (n) {
+//         FilesFinal[typeKey].push(self.settings.cdn + n)
+//       })
+//     })
+//
+//     self.app.locals.frontendFilesFinal = FilesFinal
+//   }
+//   debug(&#039;end cdn&#039;)
+// }
+
+function build (options) {
+  return new Register(options)
+}
+
+module.exports = build</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ cyclomatic }} <br>
+    Length : {{ halstead.length }} <br>
+    Difficulty : {{ halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

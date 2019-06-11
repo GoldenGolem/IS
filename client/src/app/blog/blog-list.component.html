@@ -1,0 +1,40 @@
+<h1>Blog List</h1>
+
+<a
+  class="btn btn-primary"
+  id="createBlogEntryBtn"
+  *ngIf="auth.loggedIn" [routerLink]="['/blog/create']">
+  <i class="fa fa-plus"></i>
+  New Blog Entry
+</a>
+
+<br />
+
+<app-paginated-search-list
+  [listRetriever]="blogService.getList"
+  [sortFields]="sortFields"
+  #list>
+  <ul class="list-unstyled" *ngIf="list.items">
+    <li *ngFor="let blogEntry of list.items trackBy _id" class="blog-list-item">
+      <h2>
+        <a [routerLink]="['/blog', blogEntry.slug]">{{blogEntry.title}}</a>
+      </h2>
+      <small>
+        Posted on {{blogEntry.created}} by
+        <!-- Pass username query param just for post count template. Only
+             user (id) is actually used for filtering. -->
+        <a
+          [queryParams]="{
+            user: blogEntry.user._id,
+            username: blogEntry.user.profile.name
+          }"
+          [routerLink]="['/blog/list']">
+          {{blogEntry.user.profile.name}}
+        </a>
+      </small>
+      <div>
+        {{blogEntry.content.slice(0, 100)}}...
+      </div>
+    </li>
+  </ul>
+</app-paginated-search-list>

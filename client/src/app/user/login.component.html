@@ -1,0 +1,33 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+		<div class="jumbotron">
+			<h2>Enter your credentials.</h2>
+			<form (ngSubmit)="login()">
+				<div class="form-group">
+					<label for="email">E-mail address</label>
+					<input type="email" [(ngModel)]="email" id="email" name="email" class="form-control">
+				</div>
+				<div class="form-group">
+					<label for="password">Password</label>
+					<input type="password" [(ngModel)]="password" id="password"
+						name="password" class="form-control">
+				</div>
+        <small>
+          <a [routerLink]="['/forgot-password']">Forgot your password?</a>
+        </small>
+        <br />
+        <div *ngIf="authService.error" class="alert alert-danger">
+          {{authService.error}}
+        </div>
+				<button type="submit" class="btn btn-primary">Log In</button>
+			</form>
+
+      <hr>
+
+      <a class="btn btn-default" href="/auth/google">
+        <i class="fa fa-google"></i> 
+        Log In with Google
+      </a>
+		</div>
+	</div>
+</div>

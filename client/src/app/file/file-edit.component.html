@@ -1,0 +1,67 @@
+<h1>Edit File Entry</h1>
+
+<form
+  novalidate
+  *ngIf="authService.user()._id === fileEntry.user._id || authService.isAdmin"
+  [formGroup]="fileEditForm"
+  (submit)="editFileEntry()">
+  <div
+    class="form-group"
+    [class.has-error]="fileEditForm.controls['title'].invalid
+      && fileEditForm.controls['title'].touched">
+    <label for="title">Title</label>
+    <input
+      class="form-control"
+      id="title"
+      name="title"
+      type="text"
+      [formControl]="fileEditForm.controls['title']"/>
+    <span
+      class="help-block"
+      *ngIf="fileEditForm.controls['title'].hasError('required')
+        && fileEditForm.controls['title'].touched">
+      Title is required
+    </span>
+  </div>
+  <div
+    class="form-group"
+    [class.has-error]="fileEditForm.controls['content'].invalid
+      && fileEditForm.controls['content'].touched">
+    <label for="content">Content</label>
+    <textarea class="form-control"
+      id="content"
+      name="content"
+      rows="30"
+      type="text"
+      [formControl]="fileEditForm.controls['content']">
+    </textarea>
+    <span
+      class="help-block" 
+      *ngIf="fileEditForm.controls['content'].hasError('required')
+        && fileEditForm.controls['content'].touched">
+      Content is required
+    </span>
+  </div>
+  <div class="alert alert-danger" *ngIf="fileService.error">
+    {{fileService.error}}
+  </div>
+  <div class="pull-right">
+    <button
+       class="btn btn-primary"
+       type="submit"
+      [disabled]="fileEditForm.invalid">
+      Update
+    </button>
+    <button
+      class="btn btn-default"
+      type="button"
+      (click)="location.back()">
+      Cancel</button>
+  </div>
+</form>
+
+<div
+  class="alert alert-danger"
+  *ngIf="authService.user()._id !== fileEntry.user._id && !authService.isAdmin">
+  You are not authorized to edit this post
+</div>

@@ -1,0 +1,17 @@
+<h1>Upload New File</h1>
+
+<div>
+  <img
+    *ngIf="profilePic && !uploader.queue[0]"
+    src="{{profilePic}}"
+    style="width: 100%;"/>
+  <div *ngIf="uploading"><i class="fa fa-spinner fa-pulse"></i></div>
+  <input type="file" ng2FileSelect [uploader]="uploader" (change)="detectChanges()"/>
+  <br />
+  <button
+    class="btn btn-default"
+    (click)="startUpload()"
+    [disabled]="!uploader.queue[0]">
+    Upload Picture
+  </button>
+</div>

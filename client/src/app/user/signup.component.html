@@ -1,0 +1,128 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+    <div class="jumbotron">
+      <h2>Fill your data.</h2>
+      <form novalidate [formGroup]="signupForm" (submit)="signup()">
+        <div
+         class="form-group"
+          [class.has-error]="!signupForm.get('email').valid
+            && signupForm.get('email').touched">
+          <label class="control-label" for="email">
+            <strong>Email *</strong>
+          </label>
+          <input
+            class="form-control" 
+            id="email"
+            name="email"
+            type="email"
+            [formControl]="signupForm.get('email')"/>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('email').hasError('required')
+              && signupForm.get('email').touched">
+            Email is required
+          </span>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('email').hasError('pattern')
+              && signupForm.get('email').touched">
+            Must be a proper email
+          </span>
+        </div>
+        <div
+          class="form-group"
+          [class.has-error]="
+            !signupForm.get('profile').get('name').valid
+              && signupForm.get('profile').get('name').touched">
+          <label class="control-label" for="name">
+            <strong>Name *</strong>
+          </label>
+          <input
+            class="form-control" 
+            id="name"
+            name="name"
+            type="text"
+            [formControl]="signupForm.get('profile').get('name')"/>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('profile').get('name').hasError('required')
+              && signupForm.get('profile').get('name').touched">
+            Name is required
+          </span>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('profile').get('name').hasError('minlength')
+              && signupForm.get('profile').get('name').touched">
+            Name requires at least three characters
+          </span>
+        </div>
+        <div
+          class="form-group"
+          [class.has-error]="!signupForm.get('password').valid
+            && signupForm.get('password').touched">
+          <label class="control-label" for="password">
+            <strong>Password *</strong>
+          </label>
+          <input 
+            class="form-control" 
+            id="password"
+            name="password"
+            type="password"
+            [formControl]="signupForm.get('password')"/>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('password').hasError('required')
+              && signupForm.get('password').touched">
+            Password is required
+          </span>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('password').hasError('minlength')
+              && signupForm.get('password').touched">
+            Password requires at least six characters
+          </span>
+        </div>
+        <div 
+          class="form-group"
+          [class.has-error]="!signupForm.get('confirmPassword').valid
+            && signupForm.get('confirmPassword').touched">
+          <label class="control-label" for="confirmPassword">
+            <strong>Confirm Password *</strong>
+          </label>
+          <input
+            class="form-control" 
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            [formControl]="signupForm.get('confirmPassword')"/>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('confirmPassword').hasError('required')
+              && signupForm.get('confirmPassword').touched">
+            Password is required
+          </span>
+          <span
+            class="help-block"
+            *ngIf="signupForm.get('confirmPassword').hasError('minlength')
+              && signupForm.get('confirmPassword').touched">
+            Password requires at least six characters
+          </span>
+        </div>
+        <div *ngIf="authService.error" class="alert alert-danger">
+          {{authService.error}}
+        </div>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="signupForm.invalid">
+          Sign Up!
+        </button>
+      </form>
+      <hr>
+      <a class="btn btn-default" href="/auth/google">
+        <i class="fa fa-google"></i> 
+        Sign Up with Google
+      </a>
+    </div>
+  </div>
+</div>

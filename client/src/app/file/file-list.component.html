@@ -1,0 +1,37 @@
+<h1>File List</h1>
+
+<a
+  class="btn btn-primary"
+  id="createFileEntryBtn"
+  *ngIf="auth.loggedIn" [routerLink]="['/file/create']">
+  <i class="fa fa-plus"></i>
+  New File Upload
+</a>
+
+<br />
+
+<app-paginated-search-list
+  [listRetriever]="fileService.getList"
+  [sortFields]="sortFields"
+  #list>
+  <ul class="list-unstyled" *ngIf="list.items">
+    <li *ngFor="let fileEntry of list.items trackBy _id" class="file-list-item">
+      <h2>
+        <a [routerLink]="['/file', fileEntry._id]">{{fileEntry.name}}</a>
+      </h2>
+      <small>
+        Uploaded on {{fileEntry.created}} by
+        <!-- Pass username query param just for post count template. Only
+             user (id) is actually used for filtering. -->
+        <a
+          [queryParams]="{
+            user: fileEntry.user._id,
+            username: fileEntry.user.profile.name
+          }"
+          [routerLink]="['/file/list']">
+          {{fileEntry.user.profile.name}}
+        </a>
+      </small>
+    </li>
+  </ul>
+</app-paginated-search-list>

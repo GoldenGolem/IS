@@ -1,0 +1,67 @@
+<h1>Edit Blog Entry</h1>
+
+<form
+  novalidate
+  *ngIf="authService.user()._id === blogEntry.user._id || authService.isAdmin"
+  [formGroup]="blogEditForm"
+  (submit)="editBlogEntry()">
+  <div
+    class="form-group"
+    [class.has-error]="blogEditForm.controls['title'].invalid
+      && blogEditForm.controls['title'].touched">
+    <label for="title">Title</label>
+    <input
+      class="form-control"
+      id="title"
+      name="title"
+      type="text"
+      [formControl]="blogEditForm.controls['title']"/>
+    <span
+      class="help-block"
+      *ngIf="blogEditForm.controls['title'].hasError('required')
+        && blogEditForm.controls['title'].touched">
+      Title is required
+    </span>
+  </div>
+  <div
+    class="form-group"
+    [class.has-error]="blogEditForm.controls['content'].invalid
+      && blogEditForm.controls['content'].touched">
+    <label for="content">Content</label>
+    <textarea class="form-control"
+      id="content"
+      name="content"
+      rows="30"
+      type="text"
+      [formControl]="blogEditForm.controls['content']">
+    </textarea>
+    <span
+      class="help-block" 
+      *ngIf="blogEditForm.controls['content'].hasError('required')
+        && blogEditForm.controls['content'].touched">
+      Content is required
+    </span>
+  </div>
+  <div class="alert alert-danger" *ngIf="blogService.error">
+    {{blogService.error}}
+  </div>
+  <div class="pull-right">
+    <button
+       class="btn btn-primary"
+       type="submit"
+      [disabled]="blogEditForm.invalid">
+      Update
+    </button>
+    <button
+      class="btn btn-default"
+      type="button"
+      (click)="location.back()">
+      Cancel</button>
+  </div>
+</form>
+
+<div
+  class="alert alert-danger"
+  *ngIf="authService.user()._id !== blogEntry.user._id && !authService.isAdmin">
+  You are not authorized to edit this post
+</div>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - run.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>run.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">61.26</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">104</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">17.69</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">0.63</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">module.exports = run
+
+var Mean = require(&#039;./server.mean.js&#039;)
+var SocketIO = require(&#039;./server.socketio.js&#039;)
+var error = require(&#039;./server/error.js&#039;)
+var debug = require(&#039;debug&#039;)(&#039;meanstackjs:run&#039;)
+
+function run (ServerConstructor, opts, cb) {
+  debug(&#039;start run - ServerConstructor&#039;)
+  if (!opts) opts = {}
+  if (typeof opts === &#039;function&#039;) {
+    cb = opts
+    opts = {}
+  }
+  var server = new ServerConstructor(opts, function (err) {
+    if (err) {
+      console.error(&#039;Error during &#039; + server.settings.title + &#039; startup. Abort.&#039;)
+      console.error(err.stack)
+      process.exit(1)
+    }
+
+    debug(&#039;end run - ServerConstructor&#039;)
+    typeof cb === &#039;function&#039; &amp;&amp; cb()
+  })
+}
+
+process.on(&#039;unhandledRejection&#039;, function (reason) {
+  debug(&#039;System Error unhandledRejection:&#039; + reason)
+  console.error(&#039;[UNHANDLED REJECTION]&#039;)
+  console.error(error.log(reason))
+})
+
+process.on(&#039;uncaughtException&#039;, function (err) {
+  debug(&#039;System Error uncaughtException:&#039; + err)
+  console.error(&#039;[UNCAUGHT EXCEPTION] - &#039;, err.message)
+  console.log()
+  switch (err.code) {
+    case &#039;EACCES&#039;:
+      console.log(&#039;(Permission denied): An attempt was made to access a file in a way forbidden by its file access permissions.&#039;)
+      break
+    case &#039;EADDRINUSE&#039;:
+      console.log(&#039;(Address already in use): An attempt to bind a server (net, http, or https) to a local address failed due to another server on the local system already occupying that address.&#039;)
+      break
+    case &#039;ECONNREFUSED&#039;:
+      console.log(&#039;(Connection refused): No connection could be made because the target machine actively refused it. This usually results from trying to connect to a service that is inactive on the foreign host.&#039;)
+      break
+    case &#039;ECONNRESET&#039;:
+      console.log(&#039;(Connection reset by peer): A connection was forcibly closed by a peer. This normally results from a loss of the connection on the remote socket due to a timeout or reboot. Commonly encountered via the http and net modules.&#039;)
+      break
+    case &#039;EEXIST&#039;:
+      console.log(&#039;(File exists): An existing file was the target of an operation that required that the target not exist.&#039;)
+      break
+    case &#039;EISDIR&#039;:
+      console.log(&#039;(Is a directory): An operation expected a file, but the given pathname was a directory.&#039;)
+      break
+    case &#039;EMFILE&#039;:
+      console.log(&#039;(Too many open files in system): Maximum number of file descriptors allowable on the system has been reached, and requests for another descriptor cannot be fulfilled until at least one has been closed. This is encountered when opening many files at once in parallel, especially on systems (in particular, OS X) where there is a low file descriptor limit for processes. To remedy a low limit, run ulimit -n 2048 in the same shell that will run the Node.js process.&#039;)
+      break
+    case &#039;ENOENT&#039;:
+      console.log(&#039;(No such file or directory): Commonly raised by fs operations to indicate that a component of the specified pathname does not exist -- no entity (file or directory) could be found by the given path.&#039;)
+      break
+    case &#039;ENOTDIR&#039;:
+      console.log(&#039;(Not a directory): A component of the given pathname existed, but was not a directory as expected. Commonly raised by fs.readdir.&#039;)
+      break
+    case &#039;ENOTEMPTY&#039;:
+      console.log(&#039;(Directory not empty): A directory with entries was the target of an operation that requires an empty directory -- usually fs.unlink.&#039;)
+      break
+    case &#039;EPERM&#039;:
+      console.log(&#039;(Operation not permitted): An attempt was made to perform an operation that requires elevated privileges.&#039;)
+      break
+    case &#039;EPIPE&#039;:
+      console.log(&#039;(Broken pipe): A write on a pipe, socket, or FIFO for which there is no process to read the data. Commonly encountered at the net and http layers, indicative that the remote side of the stream being written to has been closed.&#039;)
+      break
+    case &#039;ETIMEDOUT&#039;:
+      console.log(&#039;(Operation timed out): A connect or send request failed because the connected party did not properly respond after a period of time. Usually encountered by http or net -- often a sign that a socket.end() was not properly called.&#039;)
+      break
+  }
+    // Our Custom Error Handler
+  error.log(err, function (logErr) {
+    if (logErr)console.log(&#039;Error in log function in errors.js&#039;)
+      // How do you want to handle your errors ? email admin , exit process or nothing at all ?
+    process.exit(1)
+      // var settings = require(&#039;./configs/settings.js&#039;).get()
+      // var environment = require(&#039;./configs/environment.js&#039;).get()
+      // if (environment === &#039;production&#039;) {
+      //   var message = {}
+      //   message.to = settings.email.error
+      //   message.subject = &#039;[UNCAUGHT EXCEPTION] &#039; + err.message
+      //   message.text = err.stack.toString()
+      //   console.log(message)
+      //   console.log(&#039;Sending Email in production is commented out ./run.js:99&#039;)
+      //   var mail = require(&#039;./server/mail.js&#039;)
+      //   mail.send(message, function (err) {
+      //     if (err) throw err
+      //     process.exit(1)
+      //   })
+      // }
+  })
+})
+
+if (!module.parent) {
+  run(Mean)
+  run(SocketIO)
+}</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ cyclomatic }} <br>
+    Length : {{ halstead.length }} <br>
+    Difficulty : {{ halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<div *ngIf="auth.loggedIn
+  && (auth.user()._id === blogEntry.user._id || auth.isAdmin)">
+  <div class="pull-right">
+    <a class="btn btn-primary" [routerLink]="['edit']" id="blogEditBtn">
+      <i class="fa fa-edit"></i>
+      Edit
+    </a>
+    <button
+      class="btn btn-danger"
+      id="blogDeleteBtn"
+      (click)="deleteBlogEntry()">
+      <i class="fa fa-trash-o"></i>
+      Delete
+    </button>
+  </div>
+  <br />
+  <br />
+  <div class="alert alert-danger" *ngIf="blogService.error">
+    {{blogService.error}}
+  </div>
+</div>
+
+<h1>{{blogEntry.title}}</h1>
+
+<small>
+  Posted on {{blogEntry.created}} by
+  <!-- Pass username query param just for post count template. Only
+       user (id) is actually used for filtering. -->
+    <a
+      [queryParams]="{
+        user: blogEntry.user._id,
+        username: blogEntry.user.profile.name
+      }"
+      [routerLink]="['/blog/list']">
+    {{blogEntry.user.profile.name}}
+  </a>
+</small>
+
+<div id="blogEntryContent">
+  {{blogEntry.content}}
+</div>
+
+<br />
+
+<div
+  *ngIf="blogEntry.comments && blogEntry.comments.length"
+  id="blogEntryComments">
+  <h3>Comments</h3>
+  <app-comment-view
+    *ngFor="let comment of blogEntry.comments trackBy _id; let index = index"
+    [blogEntry]="blogEntry"
+    [comment]="comment"
+    (onDeleteSuccess)="onCommentDeleteSuccess(index)"
+    class="blogEntryComment">
+  </app-comment-view>
+</div>
+
+<br />
+
+<button
+  *ngIf="!newCommentIsBeingEntered && auth.loggedIn"
+  (click)="newCommentIsBeingEntered = true"
+  class="btn btn-primary">
+  New Comment
+</button>
+
+<app-comment-edit
+  *ngIf="newCommentIsBeingEntered"
+  [blogEntry]="blogEntry"
+  [isNew]="true"
+  (onCommentCancel)="onCommentCancel()"
+  (onCommentSaveSuccess)="onCommentSave($event)">
+</app-comment-edit>

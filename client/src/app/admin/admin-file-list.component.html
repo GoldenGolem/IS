@@ -1,0 +1,73 @@
+<h1>Admin File List</h1>
+
+<a
+  class="btn btn-primary"
+  id="createFileEntryBtn"
+  *ngIf="auth.loggedIn" [routerLink]="['/file/create']">
+  <i class="fa fa-plus"></i>
+  New File Entry
+</a>
+
+<br />
+
+<div class="alert alert-danger" *ngIf="fileService.error">
+  {{fileService.error}}
+</div>
+
+<app-paginated-search-list
+  [listRetriever]="fileService.getList"
+  [sortFields]="sortFields"
+  #list>
+  <table class="table table-striped table-hover" *ngIf="list.items">
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Date</th>
+      <th>Enable/Disable</th>
+      <th>Delete</th>
+    </tr>
+    <tr
+      class="admin-file-list-item"
+      *ngFor="let fileEntry of list.items trackBy _id">
+      <td>
+        <a [routerLink]="['/file', fileEntry._id]">{{fileEntry.name}}</a>
+      </td>
+      <td>
+        <a
+          [queryParams]="{
+            user: fileEntry.user._id,
+            username: fileEntry.user.profile.name
+          }"
+          [routerLink]="['/admin/file/list']">
+          {{fileEntry.user.profile.name}}
+        </a>
+      </td>
+      <td>
+        {{fileEntry.created}}
+      </td>
+      <td>
+        <button
+          class="btn btn-primary"
+          (click) = "filepermission(fileEntry)"
+          *ngIf = "fileEntry.enabled">
+          <i class="fa fa-edit"></i>
+          Enable
+        </button>
+        <button
+          class="btn btn-danger"
+          (click) = "filepermission(fileEntry)"
+          *ngIf = "!fileEntry.enabled">
+          <i class="fa fa-edit"></i>
+          Disable
+        </button>
+      </td>
+      <td>
+        <button
+          class="btn btn-danger"
+          (click)="deleteFileEntry(fileEntry)">
+          <i class="fa fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </table>
+</app-paginated-search-list>
