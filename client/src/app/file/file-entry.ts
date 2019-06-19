@@ -3,6 +3,7 @@ import { Comment } from './comment';
 
 export class FileEntry {
   public title: string;
+  public name: string;
   public content: string;
   public user?: User;
   public created?: Date;
