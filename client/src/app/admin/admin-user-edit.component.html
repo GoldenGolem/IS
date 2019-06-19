@@ -113,6 +113,14 @@
             type="text"
             [formControl]="userEditForm.get('profile').get('website')"/>
         </div>
+        <div class="form-group">
+          <label class="control-label" for="website">
+            API KEY
+          </label>
+          <label class="control-label" for="website">
+            {{userEditForm.get('_id')}}
+          </label>
+        </div>
         <input type="hidden" [formControl]="userEditForm.get('_id')">
         <button
           class="btn btn-primary"

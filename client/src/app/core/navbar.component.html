@@ -4,7 +4,7 @@
 			<a class="navbar-brand" routerLink="/">Home</a>
 		</div>
 		<ul class="nav navbar-nav pull-left">
-      <li>
+      <li *ngIf="auth.loggedIn">
         <a
           [routerLink]="['/file/list']"
           routerLinkActive="active"
