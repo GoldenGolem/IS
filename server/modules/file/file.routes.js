@@ -8,7 +8,9 @@ module.exports = function (app, auth, mail, settings, models) {
   app.get('/api/listFiles/:userId', file.getFileList)
   app.get('/api/file/:fileId', file.getFileBySlug)
   app.get('/api/file/enable/:fileId', file.enableFileBySlug)
-  app.get('/api/loadSingleFile/:fileId', file.enableFileBySlug)
+  app.get('/api/loadSingleFile/:fileId', file.apiGetFileBySlug)
+  app.get('/api/updateMetaData/:fileId', file.setParams)
+
   // POST
   app.post('/api/file', upload.single('file'), file.postFile)
 
@@ -17,6 +19,7 @@ module.exports = function (app, auth, mail, settings, models) {
 
   // DELETE
   app.delete('/api/file/:fileId', auth.isAuthorized('file'), file.deleteFile)
+
   
 
   // PARAM

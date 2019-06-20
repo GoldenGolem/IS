@@ -50,6 +50,18 @@ exports.getFile = function (req, res, next) {
 }
 
 
+exports.setParams = function(req, res, next){
+  var newfile = {metaparms: JSON.stringify(req.query)};;
+
+  req.file = _.merge(req.file, newfile)
+  // console.log('merged: ',_.merge(req.file, newfile));
+  // console.log('file: ',req.file);
+  // return res.status(200).send(req.file)
+  req.file.save(function (err) {
+    return res.status(200).send("Success")
+  })
+}
+
 
 exports.deleteFile = function (req, res, next) {
   var file = req.file._id
@@ -112,6 +124,31 @@ exports.getFileList = function(req, res, next) {
 }
 
 
+exports.apiGetFileBySlug = function(req, res, next){
+  var values = {};
+  var link = req.file.link;
+
+  link_list = link.split('/');
+  req.file.link = req.hostname+'/'+link_list[link_list.length - 3]+'/'+link_list[link_list.length - 2]+'/'+link_list[link_list.length - 1];
+
+
+  // for(key in req.file){
+  //   if(key != 'metaparms')
+  //     values[key] = req.file[key];
+  //   else
+  //     values['metaparms1'] = JSON.parse(req.file['metaparms']);
+  // }
+
+  
+  values['created'] =   req.file['created'];
+  values['name'] =  req.file['name'];
+  values['link'] =  req.file['link'];
+  values['metaparms'] =   JSON.parse(req.file['metaparms']);
+  if(req.file['enabled'] == false)
+    return res.status(200).send("Not Enabled File")
+  return res.status(200).send(values)
+}
+
 exports.enableFileBySlug = function (req, res, next) {
   var enable = !req.file.enabled 
   var newfile = {enabled: enable}
@@ -119,9 +156,11 @@ exports.enableFileBySlug = function (req, res, next) {
   req.file.save(function (err) {
     if (err) return next(err)
     var link = req.file.link;
+
     link_list = link.split('/');
     req.file.link = req.hostname+'/'+link_list[link_list.length - 3]+'/'+link_list[link_list.length - 2]+'/'+link_list[link_list.length - 1];
-    return res.status(200).send(req.file)
+
+    return res.status(200).send(req.file);
   })
 }
 
