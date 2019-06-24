@@ -6,7 +6,8 @@ var fs = require('fs')
 var path = require('path')
 var _ = require('lodash')
 var debug = require('debug')('meanstackjs:file')
-
+var http = require('http')
+var mime = require('mime');
 exports.getFile = function (req, res, next) {
   debug('start getFile')
   auto({
@@ -62,6 +63,33 @@ exports.setParams = function(req, res, next){
   })
 }
 
+exports.apiDownFileBySlug = function(req, res, next){
+  var link = req.file.link;
+
+  link_list = link.split('/');;
+  req.file.link = '/'+link_list[link_list.length - 3]+'/'+link_list[link_list.length - 2]+'/'+link_list[link_list.length - 1];
+
+  var dirname = __dirname;
+  dirname_list = dirname.split('/');
+
+  var uploadname = "";
+
+  for(i = 0; i < dirname_list.length - 3; i ++){
+    uploadname += dirname_list[i]+'/';
+  }
+
+  var file = uploadname+'client'+req.file.link;
+
+  var filename = path.basename(file);
+  var mimetype = mime.lookup(file);
+
+
+
+  res.set('Content-disposition', 'attachment; filename=' + filename);
+  res.set('Content-type', mimetype);
+  var filestream = fs.createReadStream(file);
+  filestream.pipe(res);
+}
 
 exports.deleteFile = function (req, res, next) {
   var file = req.file._id
