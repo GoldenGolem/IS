@@ -25,7 +25,12 @@ var fileSchema = mongoose.Schema({
   enabled: {
     type: Boolean,
     default: true
+  },
+  metaparms: {
+    type: String
   }
+}, {
+  usePushEach: true
 })
 
 module.exports = fileSchema
