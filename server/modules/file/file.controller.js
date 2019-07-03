@@ -80,7 +80,7 @@ exports.apiDownFileBySlug = function(req, res, next){
 
   var file = uploadname+'client'+req.file.link;
 
-  const stats = fs.statSyn(file);
+  const stats = fs.statSync(file);
 
   var filename = path.basename(file);
   var mimetype = mime.lookup(file);
