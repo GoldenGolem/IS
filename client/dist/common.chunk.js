@@ -1035,7 +1035,7 @@ exports.Comment = Comment;
 /***/ "./client/src/app/file/file-create.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Upload New File</h1>\n\n<div>\n  <img\n    *ngIf=\"profilePic && !uploader.queue[0]\"\n    src=\"{{profilePic}}\"\n    style=\"width: 100%;\"/>\n  <div *ngIf=\"uploading\"><i class=\"fa fa-spinner fa-pulse\"></i></div>\n  <input type=\"file\" ng2FileSelect [uploader]=\"uploader\" (change)=\"detectChanges()\"/>\n  <br />\n  <button\n    class=\"btn btn-default\"\n    (click)=\"startUpload()\"\n    [disabled]=\"!uploader.queue[0]\">\n    Upload Picture\n  </button>\n</div>"
+module.exports = "<h1>Upload New File</h1>\n\n<div>\n  <img\n    *ngIf=\"profilePic && !uploader.queue[0]\"\n    src=\"{{profilePic}}\"\n    style=\"width: 100%;\"/>\n  <div *ngIf=\"uploading\"><i class=\"fa fa-spinner fa-pulse\"></i></div>\n  <input type=\"file\" ng2FileSelect [uploader]=\"uploader\" (change)=\"detectChanges()\"/>\n  <br />\n  <button\n    class=\"btn btn-default\"\n    (click)=\"startUpload()\"\n    [disabled]=\"!uploader.queue[0]\">\n    Upload File\n  </button>\n</div>"
 
 /***/ }),
 
