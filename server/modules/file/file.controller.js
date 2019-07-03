@@ -80,13 +80,14 @@ exports.apiDownFileBySlug = function(req, res, next){
 
   var file = uploadname+'client'+req.file.link;
 
+  const stats = fs.statSyn(file);
+
   var filename = path.basename(file);
   var mimetype = mime.lookup(file);
 
-
-
-  res.set('Content-disposition', 'attachment; filename=' + filename);
+  // res.set('Content-disposition', 'attachment; filename=' + filename);
   res.set('Content-type', mimetype);
+  res.set('Content-length', stats.size);
   var filestream = fs.createReadStream(file);
   filestream.pipe(res);
 }
