@@ -94,9 +94,9 @@ exports.apiDownFileBySlug = function(req, res, next){
   fs.readFile(file, {encoding: 'utf-8'}, function(err,data){
     if (!err) {
         console.log('received data: ' + data);
-        response.writeHead(200, {'Content-Type': 'text/html'});
-        response.write(data);
-        response.end();
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.write(data);
+        res.end();
     } else {
         console.log(err);
     }
