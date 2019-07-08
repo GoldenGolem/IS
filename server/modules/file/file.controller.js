@@ -80,16 +80,27 @@ exports.apiDownFileBySlug = function(req, res, next){
 
   var file = uploadname+'client'+req.file.link;
   console.log('test',req.file.link);
-  res.writeHead(301, { Location: req.file.link});
-  res.end();
+  // res.writeHead(301, { Location: req.file.link});
+  // res.end();
 
-  // var filename = path.basename(file);
-  // var mimetype = mime.lookup(file);
+  var filename = path.basename(file);
+  var mimetype = mime.lookup(file);
 
-  // // res.set('Content-disposition', 'attachment; filename=' + filename);
-  // res.set('Content-type', mimetype);
-  // var filestream = fs.createReadStream(file);
-  // filestream.pipe(res);
+  // res.set('Content-disposition', 'attachment; filename=' + filename);
+  //res.set('Content-type', mimetype);
+  //var filestream = fs.createReadStream(file);
+  //filestream.pipe(res);
+
+  fs.readFile(file, {encoding: 'utf-8'}, function(err,data){
+    if (!err) {
+        console.log('received data: ' + data);
+        response.writeHead(200, {'Content-Type': 'text/html'});
+        response.write(data);
+        response.end();
+    } else {
+        console.log(err);
+    }
+});
 }
 
 exports.deleteFile = function (req, res, next) {
