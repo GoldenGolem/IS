@@ -138,7 +138,7 @@
     "maxcdn": "^0.2.0",
     "method-override": "^2.3.5",
     "mongo-throttle": "^1.2.0",
-    "mongoose": "^4.7.4",
+    "mongoose": "^5.7.5",
     "mongoose-timestamp": "^0.6.0",
     "mongoose-url-slugs": "^0.2.1",
     "mongoose-validator": "^1.2.4",
