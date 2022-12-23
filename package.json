@@ -131,7 +131,7 @@
     "http-status-codes": "^1.0.6",
     "is-there": "^4.3.3",
     "isbot": "^2.0.1",
-    "jsonwebtoken": "^7.1.9",
+    "jsonwebtoken": "^9.0.0",
     "less": "^2.5.3",
     "livereload": "^0.6.0",
     "lodash": "^4.11.1",
